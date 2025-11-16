@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Startup Validator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="top-bar">
+    <button id="logout">Logout</button>
+</div>
+
+<div class="container">
+
+    <!-- Ліва колонка: список ідей -->
+    <aside class="sidebar">
+        <h3>My Ideas</h3>
+        <div id="ideasList"></div>
+    </aside>
+
+    <!-- Центральна частина: форма і результати -->
+    <main class="main">
+        <h3>New Idea</h3>
+        <textarea id="ideaText" rows="4" placeholder="Describe your startup idea..."></textarea>
+        <button id="analyzeBtn">Analyze</button>
+
+        <div class="analysis-block">
+            <h3>Analysis Result</h3>
+
+            <h4>Need:</h4>
+            <pre id="need"></pre>
+
+            <h4>Solution:</h4>
+            <pre id="solution"></pre>
+
+            <h4>Benefit:</h4>
+            <pre id="benefit"></pre>
+
+            <h4>Competitors:</h4>
+            <pre id="competitors"></pre>
+        </div>
+    </main>
+
+</div>
+
+<script src="app.js"></script>
+<script>
+// Check auth
+const token = localStorage.getItem('token');
+if (!token) location.href = "login.html";
+
+// Logout
+document.getElementById('logout').onclick = () => {
+    localStorage.removeItem('token');
+    location.href = "login.html";
+};
+
+// Load all ideas
+async function loadIdeas() {
+    const res = await fetch("http://localhost:4000/api/ideas", {
+        headers: { "Authorization": "Bearer " + token }
+    });
+    const data = await res.json();
+
+    const list = document.getElementById("ideasList");
+    list.innerHTML = "";
+
+    data.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "idea-item";
+        div.textContent = item.idea_text.slice(0, 60) + "...";
+        div.onclick = () => loadIdea(item.id);
+        list.appendChild(div);
+    });
+}
+
+// Load one idea
+async function loadIdea(id) {
+    const res = await fetch("http://localhost:4000/api/idea/" + id, {
+        headers: { "Authorization": "Bearer " + token }
+    });
+    const data = await res.json();
+
+    document.getElementById("need").textContent = data.need || "";
+    document.getElementById("solution").textContent = data.solution || "";
+    document.getElementById("benefit").textContent = data.benefit || "";
+    document.getElementById("competitors").textContent = data.competitors || "";
+}
+
+// Analyze new idea
+document.getElementById('analyzeBtn').onclick = async () => {
+    const idea_text = document.getElementById("ideaText").value.trim();
+    if (!idea_text) return alert("Enter an idea!");
+
+    const res = await fetch("http://localhost:4000/api/analyze", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ idea_text })
+    });
+
+    const data = await res.json();
+    if (!data.id) return alert(data.error || "Error analyzing idea");
+
+    document.getElementById("need").textContent = data.need;
+    document.getElementById("solution").textContent = data.solution;
+    document.getElementById("benefit").textContent = data.benefit;
+    document.getElementById("competitors").textContent = data.competitors;
+
+    loadIdeas();
+};
+
+loadIdeas();
+</script>
+</body>
+</html>

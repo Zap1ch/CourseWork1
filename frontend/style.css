@@ -1,0 +1,197 @@
+/* ---------------------- Body & Fonts ---------------------- */
+body {
+    margin: 0;
+    padding: 0;
+    background: #f5f6fa;
+    font-family: Arial, sans-serif;
+}
+
+/* ---------------------- Auth Pages (Login/Register) ---------------------- */
+.auth-container {
+    background: #fff;
+    width: 350px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    margin: 80px auto;
+}
+
+.auth-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: capitalize;
+    margin-top: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.forgot-password a {
+    text-transform: capitalize;
+    color: #4a69bd;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background: #4a69bd;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #3c54a0;
+}
+
+.create-account {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.create-account a {
+    color: #4a69bd;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.create-account a:hover {
+    text-decoration: underline;
+}
+
+.message {
+    margin-top: 10px;
+    text-align: center;
+    color: red;
+    font-size: 14px;
+}
+
+/* ---------------------- Main Page ---------------------- */
+.top-bar {
+    background: #222;
+    color: white;
+    padding: 10px 20px;
+    text-align: right;
+}
+
+.top-bar button {
+    padding: 6px 12px;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    background: #4a69bd;
+    color: white;
+}
+
+.top-bar button:hover {
+    background: #3c54a0;
+}
+
+.container {
+    display: flex;
+    height: calc(100vh - 50px);
+}
+
+.sidebar {
+    width: 25%;
+    background: white;
+    padding: 15px;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+}
+
+.sidebar h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.idea-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.idea-item:hover {
+    background: #f0f0f0;
+}
+
+.main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+button#analyzeBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #4a69bd;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+button#analyzeBtn:hover {
+    background: #3c54a0;
+}
+
+.analysis-block {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.analysis-block h3 {
+    margin-top: 0;
+}
+
+.analysis-block h4 {
+    margin-bottom: 5px;
+    margin-top: 10px;
+}
+
+.analysis-block pre {
+    background: #f7f7f7;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #eee;
+    white-space: pre-wrap;
+    font-family: inherit;
+}
