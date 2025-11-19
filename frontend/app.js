@@ -7,7 +7,7 @@ if (loginForm) {
         const password = document.getElementById("password").value.trim();
 
         try {
-            const res = await fetch("http://localhost:4000/api/login", {
+            const res = await fetch("http://localhost:3000/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
@@ -41,24 +41,26 @@ if (registerForm) {
         }
 
         try {
-            const res = await fetch("http://localhost:4000/api/register", {
+            const res = await fetch("http://localhost:3000/api/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
             });
+
             const data = await res.json();
 
-            if (data.token) {
-                localStorage.setItem("token", data.token);
-                location.href = "main.html";
+            if (data.success) {
+                document.getElementById("message").textContent = "Registration successful! Redirecting...";
+                setTimeout(() => location.href = "login.html", 1000);
             } else {
-                document.getElementById("message").textContent = data.error || "Registration failed";
+                document.getElementById("message").textContent = data.message || "Registration failed";
             }
         } catch (err) {
             document.getElementById("message").textContent = "Error connecting to server";
         }
     };
 }
+
 
 /* ---------------------- Main Page ---------------------- */
 const token = localStorage.getItem("token");
@@ -74,7 +76,7 @@ if (token && document.getElementById("ideasList")) {
     // Load all ideas
     async function loadIdeas() {
         try {
-            const res = await fetch("http://localhost:4000/api/ideas", {
+            const res = await fetch("http://localhost:3000/api/ideas", {
                 headers: { "Authorization": "Bearer " + token }
             });
             const data = await res.json();
@@ -97,7 +99,7 @@ if (token && document.getElementById("ideasList")) {
     // Load one idea
     async function loadIdea(id) {
         try {
-            const res = await fetch("http://localhost:4000/api/idea/" + id, {
+            const res = await fetch("http://localhost:3000/api/idea/" + id, {
                 headers: { "Authorization": "Bearer " + token }
             });
             const data = await res.json();
@@ -118,7 +120,7 @@ if (token && document.getElementById("ideasList")) {
         if (!idea_text) return alert("Enter an idea!");
 
         try {
-            const res = await fetch("http://localhost:4000/api/analyze", {
+            const res = await fetch("http://localhost:3000/api/analyze", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
