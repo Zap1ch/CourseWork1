@@ -119,6 +119,14 @@ if (token && document.getElementById("ideasList")) {
         const idea_text = document.getElementById("ideaText").value.trim();
         if (!idea_text) return alert("Enter an idea!");
 
+        // 1. Вмикаємо індикатор завантаження
+        const loadingEl = document.getElementById("loading");
+        if (loadingEl) loadingEl.style.display = "block";
+        
+        // Блокуємо кнопку, щоб не клікали двічі
+        analyzeBtn.disabled = true;
+        analyzeBtn.textContent = "Processing...";
+
         try {
             const res = await fetch("http://localhost:3000/api/analyze", {
                 method: "POST",
