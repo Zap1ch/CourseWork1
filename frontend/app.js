@@ -139,17 +139,27 @@ if (token && document.getElementById("ideasList")) {
 
             const data = await res.json();
 
-            if (!data.id) return alert(data.error || "Error analyzing idea");
+            if (!data.id) {
+                alert(data.error || "Error analyzing idea");
+                return;
+            }
 
             document.getElementById("need").textContent = data.need;
             document.getElementById("solution").textContent = data.solution;
             document.getElementById("benefit").textContent = data.benefit;
             document.getElementById("competitors").textContent = data.competitors;
 
-            loadIdeas();
+           loadIdeas();
         } catch (err) {
             console.error(err);
             alert("Error connecting to server");
+        } finally {
+            
+            if (loadingEl) loadingEl.style.display = "none";
+            
+            // Розблокуємо кнопку назад
+            analyzeBtn.disabled = false;
+            analyzeBtn.textContent = "Analyze";
         }
     };
 
