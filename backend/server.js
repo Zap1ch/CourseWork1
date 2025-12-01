@@ -14,7 +14,7 @@ const app = express();
 const PORT = 3000;
 const SECRET = process.env.JWT_SECRET;
 
-// 3. Налаштування AI (Gemini)
+// Налаштування AI (Gemini 2.5 Flash)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
@@ -105,41 +105,46 @@ app.get("/api/idea/:id", authenticateToken, async (req, res) => {
     }
 });
 
-// --- АНАЛІЗ (AI) ---
+// --- АНАЛІЗ (NABC Methodology - SRI International) ---
 app.post("/api/analyze", authenticateToken, async (req, res) => {
     const { idea_text } = req.body;
     if (!idea_text) return res.status(400).json({ error: "Idea is required" });
 
     try {
-        // 4. Промт для AI
+        // 1. Оновлений ПРОМТ за методологією NABC
         const prompt = `
-            Act as an expert Venture Capitalist. Analyze this startup idea: "${idea_text}"
-            IMPORTANT: Respond in the same language as the startup idea. 
-            (If the idea is in Ukrainian, respond in Ukrainian).
+            Act as an expert consultant from SRI International using the NABC value proposition framework.
             
-            Return ONLY valid JSON with these keys:
-            - "need": What problem does it solve?
-            - "solution": Technical solution summary.
-            - "benefit": Key business value.
-            - "competitors": List 3 competitors.
+            Analyze the following startup idea (The Document):
+            "${idea_text}"
+            
+            Based on this document, answer the 4 fundamental NABC questions.
+            IMPORTANT: Respond in the SAME LANGUAGE as the startup idea.
+            
+            Return ONLY valid JSON with these 4 keys:
+            
+            - "need": (N) What is the specific customer need or market pain point?
+            - "approach": (A) What is the unique approach or solution? (Technical & Business).
+            - "benefit": (B) What are the specific benefits per costs for the user?
+            - "competition": (C) Who are the competitors and alternatives? Why is this approach superior?
         `;
 
         const result = await model.generateContent(prompt);
         const responseText = result.response.text();
 
-        // Чистимо JSON від зайвих символів
+        // 2. Чистимо JSON від зайвих символів
         const cleanJson = responseText.replace(/```json|```/g, '').trim();
         const analysis = JSON.parse(cleanJson);
 
-        // Зберігаємо в БД
-        const competitorsStr = Array.isArray(analysis.competitors) 
-            ? analysis.competitors.join(', ') 
-            : analysis.competitors;
+        // 3. Обробляємо список конкурентів (тепер це поле competition)
+        const competitionStr = Array.isArray(analysis.competition) 
+            ? analysis.competition.join(', ') 
+            : analysis.competition;
 
-        // Зберігаємо в БД
+        // 4. Зберігаємо в БД (Нові назви колонок: approach, competition)
         const [insertRes] = await db.query(
-            "INSERT INTO ideas (user_id, idea_text, need, solution, benefit, competitors) VALUES (?, ?, ?, ?, ?, ?)",
-            [req.user.id, idea_text, analysis.need, analysis.solution, analysis.benefit, competitorsStr]
+            "INSERT INTO ideas (user_id, idea_text, need, approach, benefit, competition) VALUES (?, ?, ?, ?, ?, ?)",
+            [req.user.id, idea_text, analysis.need, analysis.approach, analysis.benefit, competitionStr]
         );
 
         res.json({ id: insertRes.insertId, ...analysis });
