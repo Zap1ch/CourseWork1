@@ -96,7 +96,7 @@ if (token && document.getElementById("ideasList")) {
         }
     }
 
-    // Load one idea
+    // Load one idea (NABC - Approach/Competition)
     async function loadIdea(id) {
         try {
             const res = await fetch("http://localhost:3000/api/idea/" + id, {
@@ -105,25 +105,25 @@ if (token && document.getElementById("ideasList")) {
             const data = await res.json();
 
             document.getElementById("need").textContent = data.need || "";
-            document.getElementById("solution").textContent = data.solution || "";
+            document.getElementById("approach").textContent = data.approach || ""; // Було solution
             document.getElementById("benefit").textContent = data.benefit || "";
-            document.getElementById("competitors").textContent = data.competitors || "";
+            document.getElementById("competition").textContent = data.competition || ""; // Було competitors
         } catch (err) {
             console.error(err);
         }
     }
 
-    // Analyze new idea
+    // Analyze new idea (NABC)
     const analyzeBtn = document.getElementById("analyzeBtn");
     analyzeBtn.onclick = async () => {
         const idea_text = document.getElementById("ideaText").value.trim();
         if (!idea_text) return alert("Enter an idea!");
 
-        // 1. Вмикаємо індикатор завантаження
+        // 1. Вмикаємо індикатор
         const loadingEl = document.getElementById("loading");
         if (loadingEl) loadingEl.style.display = "block";
         
-        // Блокуємо кнопку, щоб не клікали двічі
+        // Блокуємо кнопку
         analyzeBtn.disabled = true;
         analyzeBtn.textContent = "Processing...";
 
@@ -144,22 +144,22 @@ if (token && document.getElementById("ideasList")) {
                 return;
             }
 
+            // 2. Заповнюємо дані (NABC)
             document.getElementById("need").textContent = data.need;
-            document.getElementById("solution").textContent = data.solution;
+            document.getElementById("approach").textContent = data.approach;
             document.getElementById("benefit").textContent = data.benefit;
-            document.getElementById("competitors").textContent = data.competitors;
+            document.getElementById("competition").textContent = data.competition;
 
-           loadIdeas();
+            loadIdeas();
         } catch (err) {
             console.error(err);
             alert("Error connecting to server");
         } finally {
-            
+            // 3. Вимикаємо індикатор і повертаємо текст кнопки як у HTML
             if (loadingEl) loadingEl.style.display = "none";
             
-            // Розблокуємо кнопку назад
             analyzeBtn.disabled = false;
-            analyzeBtn.textContent = "Analyze";
+            analyzeBtn.textContent = "Analysis Result"; // Такий самий текст, як у тебе в HTML
         }
     };
 

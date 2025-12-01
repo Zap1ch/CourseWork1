@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AI Startup Validator</title>
+    <title>AI Startup Validator (NABC)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,40 +13,41 @@
 
 <div class="container">
 
-    <!-- Ліва колонка: список ідей -->
     <aside class="sidebar">
         <h3>My Ideas</h3>
         <div id="ideasList"></div>
     </aside>
 
-    <!-- Центральна частина: форма і результати -->
     <main class="main">
         <h3>New Idea</h3>
         <textarea id="ideaText" rows="4" placeholder="Describe your startup idea..."></textarea>
-        <button id="analyzeBtn">Analyze</button>
-        <div id="loading" 
-        style="display: none; color: #4a69bd; margin-top: 10px;">⏳ Analyzing... Please wait.</div>
+        
+        <button id="analyzeBtn">Analysis Result</button>
+        
+        <div id="loading" style="display: none; text-align: center; margin-top: 20px;">
+            <span style="font-size: 20px;">⏳</span> 
+            <strong style="color: #4a69bd; font-size: 16px;">AI Consultant is analyzing...</strong>
+        </div>
 
         <div class="analysis-block">
-            <h3>Analysis Result</h3>
+            <h3>Analysis Result (SRI Model)</h3>
 
             <h4>Need:</h4>
             <pre id="need"></pre>
 
-            <h4>Solution:</h4>
-            <pre id="solution"></pre>
+            <h4>Approach:</h4>
+            <pre id="approach"></pre> 
 
             <h4>Benefit:</h4>
             <pre id="benefit"></pre>
 
-            <h4>Competitors:</h4>
-            <pre id="competitors"></pre>
+            <h4>Competition:</h4>
+            <pre id="competition"></pre> 
         </div>
     </main>
 
 </div>
 
-<!-- Підключаємо app.js з усіма функціями логіки -->
 <script src="app.js"></script>
 
 </body>
