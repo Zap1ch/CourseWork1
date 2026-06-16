@@ -1,0 +1,125 @@
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.auth-card {
+  position: relative;
+  width: min(450px, 100%);
+  padding: 36px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 30px;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.7)),
+    rgba(15, 23, 42, 0.82);
+  box-shadow:
+    0 28px 90px rgba(0, 0, 0, 0.46),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+.auth-card::before {
+  content: "";
+  position: absolute;
+  inset: -80px auto auto -80px;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.26);
+  filter: blur(26px);
+}
+
+.auth-card::after {
+  content: "";
+  position: absolute;
+  right: -90px;
+  bottom: -90px;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.22);
+  filter: blur(28px);
+}
+
+.auth-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.auth-badge {
+  width: fit-content;
+  margin-bottom: 22px;
+  padding: 8px 12px;
+  border: 1px solid rgba(96, 165, 250, 0.36);
+  border-radius: 999px;
+  color: #bfdbfe;
+  background: rgba(37, 99, 235, 0.14);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.auth-card h1 {
+  margin: 0;
+  font-size: clamp(34px, 6vw, 46px);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.auth-subtitle {
+  margin: 14px 0 28px;
+  color: #94a3b8;
+  line-height: 1.65;
+}
+
+.auth-form {
+  display: grid;
+  gap: 12px;
+}
+
+.auth-form label {
+  color: #cbd5e1;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 15px 16px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 16px;
+  outline: none;
+  background: rgba(2, 6, 23, 0.55);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
+}
+
+.auth-form input:focus {
+  border-color: rgba(96, 165, 250, 0.76);
+  background: rgba(2, 6, 23, 0.72);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
+}
+
+.auth-form button {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.auth-switch {
+  margin: 24px 0 0;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.auth-switch a {
+  color: #93c5fd;
+  font-weight: 900;
+}
+
+.auth-switch a:hover {
+  color: #bfdbfe;
+}
