@@ -1,11 +1,12 @@
 import express from "express";
 import { authenticateToken } from "../middleware/authMiddleware.js";
-import { getHistory, getIdea } from "../controllers/ideaController.js";
+import { getHistory, getIdea, analyze } from "../controllers/ideaController.js";
 
 const router = express.Router();
 
-// Усі маршрути тут захищені: спочатку authenticateToken перевіряє токен, і лише потім викликається контролер
+// Усі маршрути захищені токеном
 router.get("/ideas", authenticateToken, getHistory);
 router.get("/idea/:id", authenticateToken, getIdea);
+router.post("/analyze", authenticateToken, analyze);
 
 export default router;
