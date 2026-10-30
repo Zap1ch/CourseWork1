@@ -3,18 +3,21 @@ import cors from "cors";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import path from "path";
-import fs from "fs"; // Для читання файлу
+import fs from "fs"; 
 import { fileURLToPath } from "url";
-import dotenv from "dotenv";
-import { db } from "./db.js";
+import dotenv from "dotenv"; 
+import { db } from "./db.js"; 
 
-// LANGCHAIN IMPORTS (RAG та Вектори)
-import { ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+// --- LANGCHAIN ТА AI IMPORTS ---
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai"; 
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
-import { Document } from "@langchain/core/documents";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { RunnableSequence } from "@langchain/core/runnables";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+
+// --- ІМПОРТ ЛОКАЛЬНОЇ МОДЕЛІ ---
+import { pipeline } from '@xenova/transformers';
 
 dotenv.config();
 
@@ -25,57 +28,108 @@ const SECRET = process.env.JWT_SECRET;
 app.use(cors());
 app.use(express.json());
 
-// Статичні файли (Frontend)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "../frontend")));
 
-// RAG СИСТЕМА (Векторна База Знань)
-let vectorStore;
+// ==========================================
+// CUSTOM EMBEDDINGS CLASS
+// ==========================================
+class LocalEmbeddings {
+    constructor() {
+        this.pipe = null;
+    }
 
-// Функція для створення бази знань при старті
-async function initVectorStore() {
-    try {
-        console.log("Завантаження бази знань (NABC Methodology)...");
-        
-        // 1. Читаємо файл зі статтею (переконайся, що nabc_source.txt існує!)
-        const filePath = path.join(__dirname, "nabc_source.txt");
-        if (!fs.existsSync(filePath)) {
-            console.error("Файл nabc_source.txt не знайдено! RAG не працюватиме.");
-            return;
+    async init() {
+        if (!this.pipe) {
+            this.pipe = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
         }
-        const text = fs.readFileSync(filePath, "utf8");
+    }
 
-        // 2. Створюємо документ
-        const docs = [new Document({ pageContent: text })];
+    async embedDocuments(texts) {
+        await this.init();
+        const embeddings = [];
+        for (const text of texts) {
+            const output = await this.pipe(text, { pooling: 'mean', normalize: true });
+            embeddings.push(Array.from(output.data));
+        }
+        return embeddings;
+    }
 
-        // 3. Налаштовуємо модель для ембедінгів (перетворення тексту в цифри)
-        const embeddings = new GoogleGenerativeAIEmbeddings({
-            apiKey: process.env.GEMINI_API_KEY,
-            modelName: "embedding-001", 
-        });
-
-        // 4. Зберігаємо у вектори (в пам'ять сервера)
-        vectorStore = await MemoryVectorStore.fromDocuments(docs, embeddings);
-        
-        console.log("Векторна база знань успішно створена і готова до роботи!");
-    } catch (err) {
-        console.error("Помилка ініціалізації RAG:", err);
+    async embedQuery(text) {
+        await this.init();
+        const output = await this.pipe(text, { pooling: 'mean', normalize: true });
+        return Array.from(output.data);
     }
 }
 
-// Запускаємо створення бази
-initVectorStore();
+// ==========================================
+// RAG СИСТЕМА
+// ==========================================
 
-// Налаштування основної чат-моделі (для генерації відповідей)
+let vectorStore = null; 
+const embeddingsModel = new LocalEmbeddings();
+
 const model = new ChatGoogleGenerativeAI({
     apiKey: process.env.GEMINI_API_KEY,
     modelName: "gemini-2.5-flash", 
-    temperature: 0.7
+    temperature: 0.6
 });
 
-// MIDDLEWARE & ROUTES
+async function initVectorStore() {
+    try {
+        console.log("[RAG] Сканую папку 'knowledge_base'...");
+        
+        // Шлях до папки knowledge_base
+        const directoryPath = path.join(__dirname, "knowledge_base");
+        
+        // 1. Створюємо папку, якщо її немає
+        if (!fs.existsSync(directoryPath)) {
+            console.warn(`Папка ${directoryPath} не знайдена. Створюю її...`);
+            fs.mkdirSync(directoryPath);
+            console.log("Папка створена. Покладіть туди .txt файли (наприклад nabc_source.txt) і перезапустіть сервер.");
+            return;
+        }
 
+        // 2. Читаємо всі файли .txt
+        const files = fs.readdirSync(directoryPath);
+        const allDocs = [];
+        const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000, chunkOverlap: 200 });
+        let loadedCount = 0;
+
+        for (const file of files) {
+            if (path.extname(file).toLowerCase() === '.txt') {
+                const filePath = path.join(directoryPath, file);
+                const text = fs.readFileSync(filePath, "utf8");
+                
+                const docs = await splitter.createDocuments([text]);
+                allDocs.push(...docs);
+                
+                console.log(`Прочитано знання: ${file}`);
+                loadedCount++;
+            }
+        }
+
+        // 3. Генеруємо вектори
+        if (allDocs.length > 0) {
+            console.log(`[RAG] Генерація векторів для ${loadedCount} файлів...`);
+            await embeddingsModel.init();
+            vectorStore = await MemoryVectorStore.fromDocuments(allDocs, embeddingsModel);
+            console.log(`[RAG] База знань готова! Фрагментів: ${allDocs.length}`);
+        } else {
+            console.warn("Папка 'knowledge_base' порожня. AI працюватиме, але без підказок.");
+        }
+
+    } catch (err) {
+        console.error("[RAG] Критична помилка ініціалізації:", err);
+    }
+}
+
+initVectorStore();
+
+// ==========================================
+// AUTH MIDDLEWARE
+// ==========================================
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -87,9 +141,43 @@ function authenticateToken(req, res, next) {
     });
 }
 
+// ==========================================
+// ФУНКЦІЯ ОЧИЩЕННЯ (ВАЖЛИВО!)
+// ==========================================
+function cleanAIField(data) {
+    if (!data) return "Не визначено";
+    
+    // Якщо масив -> рядок через кому
+    if (Array.isArray(data)) return data.join(', ');
+    
+    // Якщо об'єкт -> рядок формату "Ключ: Значення"
+    if (typeof data === 'object') {
+        try {
+            return Object.entries(data)
+                .map(([key, val]) => {
+                    // Робимо ключі красивими
+                    const niceKey = key.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase());
+                    // Якщо значення теж об'єкт (вкладеність), перетворюємо в JSON рядок
+                    const niceVal = typeof val === 'object' ? JSON.stringify(val) : val;
+                    return `${niceKey}: ${niceVal}`;
+                })
+                .join('\n'); // Кожен пункт з нового рядка
+        } catch (e) {
+            // Якщо щось пішло не так, просто перетворюємо в JSON рядок
+            return JSON.stringify(data);
+        }
+    }
+    
+    // Якщо це вже рядок -> просто повертаємо
+    return String(data);
+}
+
+// ==========================================
+// ROUTES
+// ==========================================
+
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "../frontend/index.html")));
 
-// Auth (Register/Login)
 app.post("/api/register", async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ success: false, message: "Missing fields" });
@@ -115,7 +203,6 @@ app.post("/api/login", async (req, res) => {
     } catch (err) { res.status(500).json({ success: false, message: "Server error" }); }
 });
 
-// History Routes
 app.get("/api/ideas", authenticateToken, async (req, res) => {
     try {
         const [rows] = await db.query("SELECT id, idea_text, created_at FROM ideas WHERE user_id = ? ORDER BY created_at DESC", [req.user.id]);
@@ -131,43 +218,39 @@ app.get("/api/idea/:id", authenticateToken, async (req, res) => {
     } catch (err) { res.status(500).json({ error: "Database error" }); }
 });
 
-// RAG-ANALYSIS ROUTE (Основна логіка)
+// === ГОЛОВНИЙ ROUTE АНАЛІЗУ ===
 app.post("/api/analyze", authenticateToken, async (req, res) => {
     const { idea_text } = req.body;
     if (!idea_text) return res.status(400).json({ error: "Idea is required" });
 
     try {
-        // КРОК 1: Пошук контексту (Retrieval)
         let contextInfo = "";
         if (vectorStore) {
-            // Шукаємо топ-2 найбільш релевантні шматки тексту для запиту "NABC methodology definitions"
-            const results = await vectorStore.similaritySearch("NABC methodology definitions needs approach benefit competition", 2);
-            // Об'єднуємо знайдене в один рядок
-            contextInfo = results.map(doc => doc.pageContent).join("\n\n");
-            console.log("🔍 RAG: Контекст знайдено і додано до промта.");
-        } else {
-            console.warn("⚠️ RAG: Векторна база не готова, працюю без контексту.");
+            try {
+                // Беремо 1 найкращий документ
+                const results = await vectorStore.similaritySearch(idea_text, 3);
+                contextInfo = results.map(doc => doc.pageContent).join("\n");
+            } catch (e) { console.log("RAG search skipped"); }
         }
 
-        // КРОК 2: Створення ланцюжка (Chain)
         const promptTemplate = ChatPromptTemplate.fromMessages([
-            ["system", `You are an expert consultant from SRI International. 
+ 
+       ["system", `Act as an expert consultant from SRI International using the NABC value proposition framework.
             
-            Use the following CONTEXT (Knowledge Base) to understand the NABC methodology:
-            ---------------------
+            Use the following KNOWLEDGE BASE (CONTEXT) to help your analysis:
             {context}
-            ---------------------
             
-            Analyze the user's startup idea based STRICTLY on the definitions from the context above.
+            Analyze the user's startup idea based on this context and the NABC framework.
             
-            IMPORTANT: Respond in the SAME LANGUAGE as the startup idea (Ukrainian if Ukrainian).
+            IMPORTANT: Respond in the SAME LANGUAGE as the startup idea.
             
             Return ONLY valid JSON with these 4 keys:
-            - "need": (N) What is the customer need?
-            - "approach": (A) What is the unique approach?
-            - "benefit": (B) What are the benefits per costs?
-            - "competition": (C) Who are the competitors?
-            `],
+            
+            - "need": (N) What is the specific customer need or market pain point?
+            - "approach": (A) What is the unique approach or solution? (Technical & Business).
+            - "benefit": (B) What are the specific benefits per costs for the user?
+            - "competition": (C) Who are the competitors and alternatives? Why is this approach superior? (If missing, suggest potential ones based on context).`],
+            
             ["user", "Startup Idea: {idea}"]
         ]);
 
@@ -177,30 +260,39 @@ app.post("/api/analyze", authenticateToken, async (req, res) => {
             new StringOutputParser()
         ]);
 
-        // КРОК 3: Виконання (Generation)
+        console.log("AI думає...");
         const responseText = await chain.invoke({
-            context: contextInfo, // Передаємо знайдений текст
-            idea: idea_text       // Передаємо ідею юзера
+            context: contextInfo,
+            idea: idea_text
         });
 
-        // КРОК 4: Обробка та збереження
+        // 1. Очищення JSON
         const cleanJson = responseText.replace(/```json|```/g, '').trim();
-        const analysis = JSON.parse(cleanJson);
+        let analysis;
+        try {
+            analysis = JSON.parse(cleanJson);
+        } catch (e) {
+            console.error("JSON Error, saving raw text");
+            analysis = { need: "Error", approach: responseText, benefit: "-", competition: "-" };
+        }
 
-        const competitionStr = Array.isArray(analysis.competition) 
-            ? analysis.competition.join(', ') 
-            : analysis.competition;
+        // 2. Підготовка значень (тут застосовуємо нашу магічну функцію cleanAIField)
+        const needStr = cleanAIField(analysis.need);
+        const approachStr = cleanAIField(analysis.approach);
+        const benefitStr = cleanAIField(analysis.benefit);
+        const competitionStr = cleanAIField(analysis.competition);
 
+        // 3. Запис у БД
         const [insertRes] = await db.query(
             "INSERT INTO ideas (user_id, idea_text, need, approach, benefit, competition) VALUES (?, ?, ?, ?, ?, ?)",
-            [req.user.id, idea_text, analysis.need, analysis.approach, analysis.benefit, competitionStr]
+            [req.user.id, idea_text, needStr, approachStr, benefitStr, competitionStr]
         );
 
         res.json({ id: insertRes.insertId, ...analysis });
 
     } catch (err) {
-        console.error("AI/RAG Error:", err);
-        res.status(500).json({ error: "Failed to analyze idea" });
+        console.error("Error:", err);
+        res.status(500).json({ error: "Analysis failed: " + err.message });
     }
 });
 
