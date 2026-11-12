@@ -1,6 +1,9 @@
 import { getUserIdeas, getIdeaById, saveIdea } from "../services/ideaService.js";
 import { analyzeIdea } from "../ai/analysisService.js";
 
+const MIN_IDEA_LENGTH = 20;
+const MAX_IDEA_LENGTH = 2000;
+
 // GET /api/ideas — історія ідей користувача
 export async function getHistory(req, res) {
     try {
@@ -30,19 +33,30 @@ export async function getIdea(req, res) {
 
 // POST /api/analyze — аналіз нової ідеї
 export async function analyze(req, res) {
-    const { idea_text } = req.body;
+    const { idea_text } = req.body || {};
 
-    if (!idea_text) {
+    if (typeof idea_text !== "string" || idea_text.trim() === "") {
         return res.status(400).json({ error: "Idea is required" });
     }
 
+    const ideaText = idea_text.trim();
+
+    if (ideaText.length < MIN_IDEA_LENGTH) {
+        return res.status(400).json({ error: "Idea is too short. Describe it in at least 20 characters." });
+    }
+
+    if (ideaText.length > MAX_IDEA_LENGTH) {
+        return res.status(400).json({ error: "Idea is too long. Maximum is 2000 characters." });
+    }
+
     try {
-        const analysis = await analyzeIdea(idea_text);
-        const id = await saveIdea(req.user.id, idea_text, analysis);
+        const analysis = await analyzeIdea(ideaText);
+        const id = await saveIdea(req.user.id, ideaText, analysis);
 
         res.json({ id, ...analysis });
     } catch (err) {
+        // Деталі помилки лишаються в терміналі сервера
         console.error("Analyze error:", err.message);
-        res.status(500).json({ error: "Analysis failed: " + err.message });
+        res.status(500).json({ error: "Analysis failed. Please try again later." });
     }
 }
