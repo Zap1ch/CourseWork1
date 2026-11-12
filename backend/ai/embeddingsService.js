@@ -1,7 +1,7 @@
 import { pipeline } from "@xenova/transformers";
 
 // Локальна модель: текст -> вектор
-const MODEL_NAME = "Xenova/all-MiniLM-L6-v2";
+const MODEL_NAME = "Xenova/paraphrase-multilingual-MiniLM-L12-v2";
 
 class LocalEmbeddings {
     constructor() {

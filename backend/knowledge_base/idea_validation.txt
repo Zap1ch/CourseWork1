@@ -1,0 +1,23 @@
+HOW TO VALIDATE A STARTUP IDEA BEFORE BUILDING IT
+Перевірка ідеї до початку розробки
+
+1. AN IDEA IS A SET OF ASSUMPTIONS
+Every idea rests on assumptions: that a certain customer has a certain problem, that the solution removes it, that the customer will pay, that the team can build it. Validation means finding the riskiest assumption and testing it in the cheapest way. The riskiest assumption is the one that would kill the idea if it is wrong and for which there is the least evidence.
+
+2. TALK TO CUSTOMERS FIRST
+Before writing code, talk to people who are supposed to have the problem. Ask about their past behaviour, not about the idea: when the problem last happened, what they did, how much time or money it cost, what they already tried. Do not ask "would you use this app", because people politely say yes. Real evidence is what people already do and pay for.
+
+3. SIGNALS OF A REAL NEED
+People describe the problem in their own words without being prompted. They already use a workaround, even an inconvenient one. They ask when the product will be ready or agree to pay or sign up in advance. Weak signals are compliments, likes and the words "good idea".
+
+4. MINIMUM VIABLE PRODUCT (MVP)
+An MVP is the smallest version that lets real users get the main value and lets the team learn whether the idea works. It is not a small copy of the full product. Examples: a landing page with a sign-up button to measure interest, a manual service where the team does by hand what the software will do later, a prototype for one university instead of all, one main function instead of ten.
+
+5. WHAT TO MEASURE
+Decide before the test what result means success. Useful measures are how many people signed up, how many came back a second time, how many paid or were ready to pay, how many recommended the product to others. Returning users are stronger evidence than the number of downloads.
+
+6. START NARROW
+It is easier to win a small group completely than a large group slightly. Choose the first group so that its members have the strongest pain, are easy to reach and talk to each other. After the product works for them, expand to similar groups.
+
+7. WHAT A VALIDATION REPORT SHOULD CONTAIN
+What is known and what is only assumed. The riskiest assumption. The cheapest test for it. The result that would confirm or reject the idea. The next step after the test.

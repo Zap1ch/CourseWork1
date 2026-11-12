@@ -1,0 +1,23 @@
+MARKET SIZE ESTIMATION FOR STARTUP IDEAS
+Оцінка розміру ринку
+
+1. WHY MARKET SIZE MATTERS
+A product can solve a real problem and still fail because too few people have this problem or they cannot pay. Market size shows whether the idea can become a business or will stay a small project. The estimate does not have to be exact, but it must be honest and show how it was calculated.
+
+2. THREE LEVELS: TAM, SAM, SOM
+TAM (Total Addressable Market) is everyone in the world who has the problem. Example: all university students.
+SAM (Serviceable Available Market) is the part the product can really serve with its language, country, platform and business model. Example: students of large universities in Ukraine who use smartphones.
+SOM (Serviceable Obtainable Market) is the part a new team can realistically win in the first years. Example: students of two or three universities where the team has contacts.
+A common mistake is to show only TAM. A huge TAM says nothing about whether a small team can reach the first hundred customers.
+
+3. BOTTOM-UP ESTIMATION
+The reliable way is to count from the bottom: number of reachable customers, multiplied by the share that would really use the product, multiplied by how much one customer pays per year. Each number must have a source or be clearly marked as an assumption. The opposite top-down way ("the market is billions, we will take one percent") is weak, because it does not explain how the customers will be reached.
+
+4. SIGNS OF A GOOD MARKET
+The number of people with the problem is growing. Customers already spend money or time on the problem. Customers are easy to find in one place, for example a university, a profession or an online community. A narrow first group can be served well and then the product can expand to neighbours.
+
+5. SIGNS OF A WEAK MARKET
+The customer is described as "everyone". The problem happens rarely, for example once a year. The people who have the problem have no money and nobody else will pay for them. The market exists only if people change their behaviour first.
+
+6. WHEN THERE IS NO DATA
+At the idea stage there are usually no numbers. In this case the honest answer is to name the first narrow customer group, say what must be counted, and suggest how to count it: public statistics, a survey, the number of members in related communities, the number of downloads of similar apps. An invented number is worse than an open question.

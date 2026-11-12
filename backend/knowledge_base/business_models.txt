@@ -1,0 +1,26 @@
+BUSINESS MODELS AND MONETIZATION FOR TECH STARTUPS
+Бізнес-моделі та монетизація
+
+1. WHY THE BUSINESS MODEL IS PART OF THE APPROACH
+In NABC the Approach includes not only the technical solution but also the way the product earns money. An idea without a business model is a feature, not a startup. The model must answer three questions: who pays, for what, and how often.
+
+2. USER AND PAYER
+The person who uses the product and the person who pays can be different. Students use a campus app, but the university may pay. Children use an educational game, but parents pay. When they are different, the product must give clear value to both, and the sale is slower because the payer must be convinced separately.
+
+3. COMMON MODELS
+Subscription: the customer pays every month or year. Works when the product is used regularly and the value does not end.
+Freemium: the basic version is free, extra functions are paid. Works only when the free version attracts many users and the paid functions are really needed by a part of them. Usually only a small share of free users ever pays.
+One-time purchase: simple, but income stops when new customers stop coming.
+Transaction fee or commission: the product takes a share of each deal between two sides, as in marketplaces. Needs many deals to earn.
+Advertising: users do not pay, advertisers pay. Needs a very large audience, so it rarely works for a small niche product.
+B2B licence: a company or institution pays for all its users. Income per customer is high, but sales take months and need trust.
+Selling data or analytics: possible only with clear consent of users and with respect to privacy laws.
+
+4. HOW TO CHOOSE
+Match the model to how often the customer gets value. Daily use fits subscription. Rare use fits one-time payment or commission. Match the model to who has the money: students have little, so models where a university, an employer or a business pays are often more realistic.
+
+5. UNIT ECONOMICS IN SIMPLE WORDS
+The business works only if one customer brings more money over the whole time of use than it costs to attract and serve this customer. If attracting a user costs more than the user ever pays, growth only increases losses. For products that use paid AI services, the cost of each request must be included in the cost of serving a customer.
+
+6. TYPICAL WEAKNESSES
+The idea says "we will monetize later". The only planned income is advertising with a small audience. The price is chosen without asking customers. The paid version has nothing that the free version lacks. The model depends on one partner who can change the rules.

@@ -48,7 +48,7 @@ export async function initVectorStore() {
 }
 
 // Пошук найближчих фрагментів до запиту
-export async function searchContext(query, count = 3) {
+export async function searchContext(query, count = 5) {
     if (!vectorStore) return "";
 
     try {

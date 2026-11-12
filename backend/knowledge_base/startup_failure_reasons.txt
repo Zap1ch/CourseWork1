@@ -1,0 +1,29 @@
+COMMON REASONS WHY STARTUPS FAIL
+Типові причини провалу стартапів
+
+1. NO REAL NEED
+The most common reason is building a product that nobody needs strongly enough. The founders like the solution and look for a problem afterwards. Warning signs: the problem was not discussed with real customers, the customers say "interesting" but do not ask when they can use it, the problem is a small inconvenience and not a pain.
+
+2. RUNNING OUT OF MONEY AND TIME
+The team builds a large product for many months before showing it to anyone. When it turns out that changes are needed, there is no money or motivation left. A small first version tested early is cheaper than a perfect product nobody tried.
+
+3. WEAK OR MISSING BUSINESS MODEL
+People use the product but nobody pays, or it costs more to attract a customer than the customer brings. Popularity without income does not last.
+
+4. STRONGER COMPETITION
+A competitor with more money, more users or a better product solves the same problem. A large company can add the same function for free to a product people already use. An idea without any barrier against copying is exposed to this risk.
+
+5. WRONG TEAM FOR THE TASK
+The team lacks a key skill: nobody can build the technology, or nobody can sell. For technical ideas that need special data, hardware or licences, the lack of access to them stops the project.
+
+6. THE CHICKEN AND EGG PROBLEM
+Products that connect two sides, such as buyers and sellers or students and tutors, are useless until both sides are present. Without a plan for how to attract the first side, the platform stays empty.
+
+7. DEPENDENCE ON OTHERS
+The product depends completely on one platform, one data source or one partner: a social network, a university system, a paid AI service. If the partner changes prices, rules or access, the product stops working.
+
+8. LEGAL AND TRUST BARRIERS
+Ideas in medicine, finance, education of children and personal data need permissions, certification and user trust. Ignoring this at the start leads to a product that cannot be launched legally.
+
+9. HOW TO USE THIS LIST IN VALIDATION
+For every idea ask which of these reasons is the most likely for it, and name it as the main risk. A good analysis does not say that the idea will fail. It says what must be true for the idea to avoid the typical failure, and how to check it early.

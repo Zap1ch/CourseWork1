@@ -1,0 +1,25 @@
+COMPETITOR ANALYSIS FOR STARTUP IDEAS
+Аналіз конкурентів
+
+1. WHY "NO COMPETITORS" IS A WARNING SIGN
+If a real problem exists, people already solve it somehow. A founder who says "we have no competitors" usually has not searched well, or the problem is not important enough for anyone to solve. Having competitors is good news: it proves that customers care about the problem and sometimes pay for a solution.
+
+2. THREE TYPES OF COMPETITION
+Direct competitors are products that solve the same problem for the same customer in a similar way.
+Indirect competitors solve the same problem in a different way. For a study planner app these are paper notebooks, spreadsheets, calendar apps and general task managers.
+The status quo is doing nothing or keeping the current habit. It is the strongest competitor for most new products, because changing a habit costs time and effort even when the new product is free.
+
+3. HOW TO FIND COMPETITORS
+Search the app stores and the web using the words a customer would use to describe the problem, not the name of your solution.
+Ask potential customers how they solve the problem today and what they have already tried.
+Look at startup catalogs and product launch sites for similar products, including ones that closed.
+Check whether large companies already offer this as a free feature inside a popular product.
+
+4. HOW TO COMPARE
+Choose three to five criteria that matter to the customer, for example price, time to get a result, ease of start, accuracy, required data. Compare the idea with each alternative on these criteria honestly, including the criteria where the idea loses. A new product must be much better on at least one criterion that customers care about. Being slightly better on everything is usually not enough to make people switch.
+
+5. BARRIERS AND DEFENSIBILITY
+Ask what stops another team or a large company from copying the idea in a few months. Typical barriers are unique data that is hard to collect, exclusive partnerships, a network effect where the product becomes more useful as more people join, deep technical expertise, and trust in a regulated field. If there is no barrier, the idea can still work, but speed and a narrow first audience become critical.
+
+6. LESSONS FROM FAILED COMPETITORS
+If similar products existed and closed, find out why. Common reasons are that customers did not want to pay, the market was too small, or data was too expensive to keep up to date. A new idea must explain what is different this time.

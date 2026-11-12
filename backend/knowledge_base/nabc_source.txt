@@ -1,33 +1,36 @@
 THE NABC VALUE PROPOSITION METHODOLOGY
-Source: Carlson, C. R., & Polizzotto, L. (2019). "The ‘NABC’s’ of Value Propositions". IEEE Engineering Management Review.
+Методологія NABC
+Source: Carlson, C. R., & Polizzotto, L. (2019). "The 'NABC's' of Value Propositions". IEEE Engineering Management Review.
 
-1. NEED (N) - Ринокова Потреба
-The most critical step is defining the customer's need. A need must be quantitative and specific. It is not enough to say "people want to be healthy." A valid need sounds like: "There is a 40% increase in crop loss due to undetected pests, costing farmers $5B annually."
+NABC is a framework from SRI International for describing and checking the value of an idea. A value proposition is complete only when all four parts are answered: Need, Approach, Benefits per costs, Competition. The parts depend on each other: without a real Need the other three do not matter.
+
+1. NEED (N) - Ринкова потреба
+The most critical step is defining the customer's need. A need must be specific and, where possible, quantitative. It is not enough to say "people want to be healthy". A valid need names the customer, the pain and its size, for example how much time or money a certain group loses because of the problem. Numbers must come from evidence. If there is no evidence yet, the number is an assumption that has to be checked, not a fact.
 Key questions for Need:
 - Who is the specific customer?
 - What is the specific pain point?
 - How large is the market opportunity?
 - Is the need urgent and growing?
 
-2. APPROACH (A) - Підхід та Рішення
-The Approach includes both the technical solution and the business model. It must be unique and defensible (e.g., patents, unique expertise).
+2. APPROACH (A) - Підхід та рішення
+The Approach includes both the technical solution and the business model. It should be unique and defensible, for example through patents, unique data or unique expertise.
 Key questions for Approach:
-- What is the technical solution? (How does it work?)
-- What is the business model? (How will it make money?)
+- What is the technical solution? How does it work?
+- What is the business model? How will it make money?
 - How is this approach different from standard solutions?
 - Is the solution scalable?
 
 3. BENEFIT (B) - Вигоди на витрати (Benefits per Costs)
-This is the value proposition. The benefits must be significantly higher than the costs (at least 2x-10x better). Benefits can be financial, environmental, or social. Costs include not just price, but time, effort, and risk.
+This is the core of the value proposition. The benefits must be much higher than the costs, several times better and not slightly better. Benefits can be financial, environmental or social. Costs include not just price, but also time, effort and risk for the customer.
 Key questions for Benefit:
-- What are the specific quantitative benefits? (e.g., "saves 20 hours per week", "reduces cost by 50%").
+- What are the specific benefits, measured if possible (time saved, cost reduced)?
 - Why is this value proposition superior to the status quo?
-- What is the ROI (Return on Investment) for the user?
+- What does the customer gain compared to everything the customer gives?
 
-4. COMPETITION (C) - Конкуренція та Альтернативи
-Competition is not just other companies; it is also the "status quo" (doing nothing). You must explain why your Approach is better than all alternatives.
+4. COMPETITION (C) - Конкуренція та альтернативи
+Competition is not just other companies. It is also the "status quo", which means doing nothing. The value proposition must explain why the Approach is better than all alternatives.
 Key questions for Competition:
 - Who are the direct competitors?
 - What are the alternative ways to solve this problem?
-- Why is your solution better? (Cheaper, faster, more accurate?).
+- Why is this solution better: cheaper, faster, more accurate?
 - What are the barriers to entry for others?
