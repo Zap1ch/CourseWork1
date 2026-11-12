@@ -1,0 +1,61 @@
+@page "/login"
+@inject StartupApiClient Api
+@inject AuthSession Session
+
+<PageTitle>Вхід</PageTitle>
+
+<h1>Вхід</h1>
+
+@if (Session.IsLoggedIn)
+{
+    <div class="alert alert-success">Ви увійшли як @Session.Email</div>
+    <button class="btn btn-outline-secondary" @onclick="Session.SignOut">Вийти</button>
+}
+else
+{
+    <EditForm Model="model" OnValidSubmit="LoginAsync" FormName="login">
+        <DataAnnotationsValidator />
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <InputText class="form-control" @bind-Value="model.Email" />
+            <ValidationMessage For="() => model.Email" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Пароль</label>
+            <InputText type="password" class="form-control" @bind-Value="model.Password" />
+            <ValidationMessage For="() => model.Password" />
+        </div>
+
+        @if (error is not null)
+        {
+            <div class="alert alert-danger">@error</div>
+        }
+
+        <button type="submit" class="btn btn-primary" disabled="@isLoading">
+            @(isLoading ? "Вхід..." : "Увійти")
+        </button>
+    </EditForm>
+}
+
+@code {
+    private readonly LoginModel model = new();
+    private string? error;
+    private bool isLoading;
+
+    private async Task LoginAsync()
+    {
+        error = null;
+        isLoading = true;
+
+        var result = await Api.LoginAsync(model.Email.Trim(), model.Password);
+
+        isLoading = false;
+
+        if (result.Ok && result.Data?.Token is not null)
+            Session.SignIn(result.Data.Token, model.Email.Trim());
+        else
+            error = result.Error ?? result.Data?.Message ?? "Не вдалося увійти.";
+    }
+}
