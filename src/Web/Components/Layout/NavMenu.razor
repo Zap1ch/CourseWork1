@@ -1,41 +1,83 @@
 @implements IDisposable
+@inject StartupApiClient Api
 @inject AuthSession Session
+@inject IdeasState Ideas
+@inject NavigationManager Nav
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Startup Validator</a>
-    </div>
-</div>
+<aside class="sidebar">
+    <a class="brand" href="analyze">
+        <span class="brand-mark">SV</span>
+        <span class="brand-name">Startup Validator</span>
+    </a>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+    <a class="new-idea" href="analyze">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 3v10M3 8h10" /></svg>
+        Нова ідея
+    </a>
+    <a class="new-idea mobile-only" href="ideas">Історія</a>
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        @if (Session.IsLoggedIn)
+    <div class="sidebar-label">Історія</div>
+
+    <nav class="history">
+        @if (ideas is null)
         {
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="analyze">Аналіз ідеї</NavLink>
-            </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="ideas">Історія</NavLink>
-            </div>
+            <div class="history-empty">Завантаження…</div>
+        }
+        else if (ideas.Count == 0)
+        {
+            <div class="history-empty">Ще немає ідей</div>
         }
         else
         {
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="login">Вхід</NavLink>
-            </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="register">Реєстрація</NavLink>
-            </div>
+            @foreach (var idea in ideas)
+            {
+                <NavLink class="history-item" href="@($"ideas/{idea.Id}")" Match="NavLinkMatch.All" title="@idea.IdeaText">
+                    @idea.IdeaText
+                </NavLink>
+            }
         }
     </nav>
-</div>
+
+    <a class="history-all" href="ideas">Усі ідеї</a>
+
+    <div class="sidebar-footer">
+        <span class="avatar">@Initial</span>
+        <span class="user-email">@Session.Email</span>
+        <button class="link-button" @onclick="LogoutAsync">Вийти</button>
+    </div>
+</aside>
 
 @code {
-    protected override void OnInitialized() => Session.Changed += OnSessionChanged;
+    private List<IdeaSummary>? ideas;
 
-    private void OnSessionChanged() => InvokeAsync(StateHasChanged);
+    private string Initial => string.IsNullOrEmpty(Session.Email) ? "?" : Session.Email[..1].ToUpper();
 
-    public void Dispose() => Session.Changed -= OnSessionChanged;
+    protected override async Task OnInitializedAsync()
+    {
+        Ideas.Changed += OnIdeasChanged;
+        await LoadAsync();
+    }
+
+    // Список ідей для бічної панелі
+    private async Task LoadAsync()
+    {
+        if (!Session.IsLoggedIn) return;
+
+        var result = await Api.GetIdeasAsync(Session.Token!);
+        ideas = result.Ok && result.Data is not null ? result.Data : new List<IdeaSummary>();
+    }
+
+    private void OnIdeasChanged() => InvokeAsync(async () =>
+    {
+        await LoadAsync();
+        StateHasChanged();
+    });
+
+    private async Task LogoutAsync()
+    {
+        await Session.SignOutAsync();
+        Nav.NavigateTo("/login");
+    }
+
+    public void Dispose() => Ideas.Changed -= OnIdeasChanged;
 }

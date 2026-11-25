@@ -13,6 +13,7 @@ var apiBaseUrl = builder.Configuration["Api:BaseUrl"]
 
 builder.Services.AddHttpClient<StartupApiClient>(client => client.BaseAddress = new Uri(apiBaseUrl));
 builder.Services.AddScoped<AuthSession>();
+builder.Services.AddScoped<IdeasState>();
 
 var app = builder.Build();
 
