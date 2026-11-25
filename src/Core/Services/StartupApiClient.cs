@@ -49,7 +49,7 @@ public sealed class StartupApiClient(HttpClient http)
 
             // Токена немає або він прострочений
             if (response.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
-                return ApiResult<T>.Fail("Сесія завершилась. Увійдіть знову.");
+                return ApiResult<T>.SessionExpired();
 
             return ApiResult<T>.Fail(await ReadErrorAsync(response, ct));
         }

@@ -83,6 +83,7 @@ public class StartupApiClientTests
 
         Assert.False(result.Ok);
         Assert.Contains("Увійдіть", result.Error);
+        Assert.True(result.Unauthorized);
     }
 
     [Fact]
