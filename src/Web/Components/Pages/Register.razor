@@ -1,0 +1,79 @@
+@page "/register"
+@inject StartupApiClient Api
+@inject AuthSession Session
+@inject NavigationManager Nav
+
+<PageTitle>Реєстрація</PageTitle>
+
+<h1>Реєстрація</h1>
+
+<div style="max-width: 420px">
+    <EditForm Model="model" OnValidSubmit="RegisterAsync" FormName="register">
+        <DataAnnotationsValidator />
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <InputText class="form-control" @bind-Value="model.Email" />
+            <ValidationMessage For="() => model.Email" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Пароль</label>
+            <InputText type="password" class="form-control" @bind-Value="model.Password" />
+            <ValidationMessage For="() => model.Password" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Повторіть пароль</label>
+            <InputText type="password" class="form-control" @bind-Value="model.ConfirmPassword" />
+            <ValidationMessage For="() => model.ConfirmPassword" />
+        </div>
+
+        @if (error is not null)
+        {
+            <div class="alert alert-danger">@error</div>
+        }
+
+        <button type="submit" class="btn btn-primary" disabled="@isLoading">
+            @(isLoading ? "Реєстрація..." : "Зареєструватися")
+        </button>
+    </EditForm>
+
+    <p class="mt-3">Вже є акаунт? <a href="/login">Увійти</a></p>
+</div>
+
+@code {
+    private readonly RegisterModel model = new();
+    private string? error;
+    private bool isLoading;
+
+    private async Task RegisterAsync()
+    {
+        error = null;
+        isLoading = true;
+
+        var email = model.Email.Trim();
+        var registered = await Api.RegisterAsync(email, model.Password);
+
+        if (!registered.Ok)
+        {
+            isLoading = false;
+            error = registered.Error ?? "Не вдалося зареєструватися.";
+            return;
+        }
+
+        // Одразу входимо новим акаунтом
+        var login = await Api.LoginAsync(email, model.Password);
+        isLoading = false;
+
+        if (login.Ok && login.Data?.Token is not null)
+        {
+            await Session.SignInAsync(login.Data.Token, email);
+            Nav.NavigateTo("/analyze");
+        }
+        else
+        {
+            Nav.NavigateTo("/login");
+        }
+    }
+}
