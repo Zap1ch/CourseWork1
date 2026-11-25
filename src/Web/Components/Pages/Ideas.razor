@@ -1,0 +1,71 @@
+@page "/ideas"
+@inject StartupApiClient Api
+@inject AuthSession Session
+@inject NavigationManager Nav
+
+<PageTitle>Історія</PageTitle>
+
+<h1>Історія аналізів</h1>
+
+@if (error is not null)
+{
+    <div class="alert alert-danger">@error</div>
+}
+else if (ideas is null)
+{
+    <p><em>Завантаження...</em></p>
+}
+else if (ideas.Count == 0)
+{
+    <p>Ідей ще немає. <a href="/analyze">Проаналізувати першу</a></p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr><th style="width: 160px">Дата</th><th>Ідея</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var idea in ideas)
+            {
+                <tr>
+                    <td>@idea.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@Short(idea.IdeaText)</td>
+                    <td><a href="@($"/ideas/{idea.Id}")">Відкрити</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<IdeaSummary>? ideas;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Session.IsLoggedIn)
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+
+        var result = await Api.GetIdeasAsync(Session.Token!);
+
+        if (result.Ok)
+        {
+            ideas = result.Data;
+        }
+        else if (result.Unauthorized)
+        {
+            await Session.SignOutAsync();
+            Nav.NavigateTo("/login");
+        }
+        else
+        {
+            error = result.Error;
+        }
+    }
+
+    private static string Short(string text) => text.Length > 120 ? text[..120] + "…" : text;
+}

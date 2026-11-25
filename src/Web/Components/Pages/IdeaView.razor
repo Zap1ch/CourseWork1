@@ -1,0 +1,64 @@
+@page "/ideas/{Id:int}"
+@inject StartupApiClient Api
+@inject AuthSession Session
+@inject NavigationManager Nav
+
+<PageTitle>Ідея</PageTitle>
+
+<p><a href="/ideas">← До історії</a></p>
+
+@if (error is not null)
+{
+    <div class="alert alert-danger">@error</div>
+}
+else if (idea is null)
+{
+    <p><em>Завантаження...</em></p>
+}
+else
+{
+    <h1>Ідея №@idea.Id</h1>
+    <p class="text-muted">@idea.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+
+    <div class="card mb-4">
+        <div class="card-body" style="white-space: pre-line">@idea.IdeaText</div>
+    </div>
+
+    <NabcView Need="@idea.Need" Approach="@idea.Approach" Benefit="@idea.Benefit" Competition="@idea.Competition" />
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private IdeaDetails? idea;
+    private string? error;
+
+    // Викликається і при першому відкритті, і при зміні Id в адресі
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!Session.IsLoggedIn)
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+
+        idea = null;
+        error = null;
+
+        var result = await Api.GetIdeaAsync(Session.Token!, Id);
+
+        if (result.Ok)
+        {
+            idea = result.Data;
+        }
+        else if (result.Unauthorized)
+        {
+            await Session.SignOutAsync();
+            Nav.NavigateTo("/login");
+        }
+        else
+        {
+            error = result.Error == "Not found" ? "Ідею не знайдено." : result.Error;
+        }
+    }
+}
