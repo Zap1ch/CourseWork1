@@ -1,14 +1,10 @@
-<div class="row g-3">
+<div class="nabc">
     @foreach (var part in Parts)
     {
-        <div class="col-lg-6">
-            <div class="card h-100">
-                <div class="card-header"><strong>@part.Letter</strong> · @part.Title</div>
-                <div class="card-body" style="white-space: pre-line">
-                    @(string.IsNullOrWhiteSpace(part.Text) ? "—" : part.Text)
-                </div>
-            </div>
-        </div>
+        <section class="nabc-section">
+            <h3><span class="nabc-letter @part.Css">@part.Letter</span>@part.Title</h3>
+            <p>@(string.IsNullOrWhiteSpace(part.Text) ? "—" : part.Text)</p>
+        </section>
     }
 </div>
 
@@ -18,12 +14,12 @@
     [Parameter] public string? Benefit { get; set; }
     [Parameter] public string? Competition { get; set; }
 
-    // Чотири блоки в порядку N, A, B, C
-    private (string Letter, string Title, string? Text)[] Parts =>
+    // Чотири розділи в порядку N, A, B, C
+    private (string Letter, string Title, string Css, string? Text)[] Parts =>
     [
-        ("N", "Need — потреба", Need),
-        ("A", "Approach — підхід", Approach),
-        ("B", "Benefit — вигоди на витрати", Benefit),
-        ("C", "Competition — конкуренція", Competition)
+        ("N", "Need — потреба", "nabc-n", Need),
+        ("A", "Approach — підхід", "nabc-a", Approach),
+        ("B", "Benefit — вигоди на витрати", "nabc-b", Benefit),
+        ("C", "Competition — конкуренція", "nabc-c", Competition)
     ];
 }

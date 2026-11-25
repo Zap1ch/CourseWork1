@@ -3,29 +3,37 @@
 @inject AuthSession Session
 @inject NavigationManager Nav
 
-<PageTitle>Ідея</PageTitle>
+<PageTitle>Ідея · Startup Validator</PageTitle>
 
-<p><a href="/ideas">← До історії</a></p>
+<div class="container">
+    @if (error is not null)
+    {
+        <div class="alert-error">@error</div>
+        <div class="chat-footer"><a class="button" href="analyze">Нова ідея</a></div>
+    }
+    else if (idea is null)
+    {
+        <p class="muted">Завантаження…</p>
+    }
+    else
+    {
+        <div class="meta">@idea.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy, HH:mm")</div>
 
-@if (error is not null)
-{
-    <div class="alert alert-danger">@error</div>
-}
-else if (idea is null)
-{
-    <p><em>Завантаження...</em></p>
-}
-else
-{
-    <h1>Ідея №@idea.Id</h1>
-    <p class="text-muted">@idea.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+        <div class="message-user">
+            <div class="bubble">@idea.IdeaText</div>
+        </div>
 
-    <div class="card mb-4">
-        <div class="card-body" style="white-space: pre-line">@idea.IdeaText</div>
-    </div>
+        <div class="message-ai">
+            <span class="brand-mark ai-mark">SV</span>
+            <div class="ai-body">
+                <div class="ai-title">Аналіз за методикою NABC</div>
+                <NabcView Need="@idea.Need" Approach="@idea.Approach" Benefit="@idea.Benefit" Competition="@idea.Competition" />
+            </div>
+        </div>
 
-    <NabcView Need="@idea.Need" Approach="@idea.Approach" Benefit="@idea.Benefit" Competition="@idea.Competition" />
-}
+        <div class="chat-footer"><a class="button" href="analyze">+ Нова ідея</a></div>
+    }
+</div>
 
 @code {
     [Parameter] public int Id { get; set; }

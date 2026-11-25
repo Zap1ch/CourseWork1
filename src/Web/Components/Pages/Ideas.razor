@@ -3,40 +3,36 @@
 @inject AuthSession Session
 @inject NavigationManager Nav
 
-<PageTitle>Історія</PageTitle>
+<PageTitle>Усі ідеї · Startup Validator</PageTitle>
 
-<h1>Історія аналізів</h1>
+<div class="container">
+    <h1 class="page-title">Усі ідеї</h1>
 
-@if (error is not null)
-{
-    <div class="alert alert-danger">@error</div>
-}
-else if (ideas is null)
-{
-    <p><em>Завантаження...</em></p>
-}
-else if (ideas.Count == 0)
-{
-    <p>Ідей ще немає. <a href="/analyze">Проаналізувати першу</a></p>
-}
-else
-{
-    <table class="table table-hover">
-        <thead>
-            <tr><th style="width: 160px">Дата</th><th>Ідея</th><th></th></tr>
-        </thead>
-        <tbody>
+    @if (error is not null)
+    {
+        <div class="alert-error">@error</div>
+    }
+    else if (ideas is null)
+    {
+        <p class="muted">Завантаження…</p>
+    }
+    else if (ideas.Count == 0)
+    {
+        <p class="muted">Ідей ще немає. <a href="analyze">Проаналізувати першу</a></p>
+    }
+    else
+    {
+        <div class="idea-list">
             @foreach (var idea in ideas)
             {
-                <tr>
-                    <td>@idea.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
-                    <td>@Short(idea.IdeaText)</td>
-                    <td><a href="@($"/ideas/{idea.Id}")">Відкрити</a></td>
-                </tr>
+                <a class="idea-row" href="@($"ideas/{idea.Id}")">
+                    <span class="idea-date">@idea.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+                    <span class="idea-text">@idea.IdeaText</span>
+                </a>
             }
-        </tbody>
-    </table>
-}
+        </div>
+    }
+</div>
 
 @code {
     private List<IdeaSummary>? ideas;
@@ -66,6 +62,4 @@ else
             error = result.Error;
         }
     }
-
-    private static string Short(string text) => text.Length > 120 ? text[..120] + "…" : text;
 }
