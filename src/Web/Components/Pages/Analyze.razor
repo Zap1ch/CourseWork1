@@ -1,0 +1,79 @@
+@page "/analyze"
+@inject StartupApiClient Api
+@inject AuthSession Session
+@inject NavigationManager Nav
+
+<PageTitle>Аналіз ідеї</PageTitle>
+
+<h1>Аналіз ідеї</h1>
+<p class="text-muted">
+    Опишіть ідею стартапу: для кого продукт, яку проблему вирішує і як заробляє. AI оцінить її за методикою NABC.
+</p>
+
+<EditForm Model="model" OnValidSubmit="AnalyzeAsync" FormName="analyze">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <InputTextArea class="form-control" rows="6" @bind-Value="model.IdeaText" disabled="@isLoading" />
+        <ValidationMessage For="() => model.IdeaText" />
+    </div>
+
+    @if (error is not null)
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+
+    <button type="submit" class="btn btn-primary" disabled="@isLoading">
+        @(isLoading ? "AI аналізує ідею..." : "Аналізувати")
+    </button>
+</EditForm>
+
+@if (isLoading)
+{
+    <p class="mt-3"><em>Аналіз зазвичай триває 10–30 секунд.</em></p>
+}
+
+@if (result is not null)
+{
+    <h2 class="mt-4 mb-3">Результат</h2>
+    <NabcView Need="@result.Need" Approach="@result.Approach" Benefit="@result.Benefit" Competition="@result.Competition" />
+    <p class="mt-3"><a href="@($"/ideas/{result.Id}")">Відкрити збережений звіт</a></p>
+}
+
+@code {
+    private readonly IdeaModel model = new();
+    private AnalysisResult? result;
+    private string? error;
+    private bool isLoading;
+
+    protected override void OnInitialized()
+    {
+        if (!Session.IsLoggedIn)
+            Nav.NavigateTo("/login");
+    }
+
+    private async Task AnalyzeAsync()
+    {
+        error = null;
+        result = null;
+        isLoading = true;
+
+        var response = await Api.AnalyzeAsync(Session.Token!, model.IdeaText.Trim());
+
+        isLoading = false;
+
+        if (response.Ok)
+        {
+            result = response.Data;
+        }
+        else if (response.Unauthorized)
+        {
+            await Session.SignOutAsync();
+            Nav.NavigateTo("/login");
+        }
+        else
+        {
+            error = response.Error;
+        }
+    }
+}

@@ -1,0 +1,29 @@
+<div class="row g-3">
+    @foreach (var part in Parts)
+    {
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header"><strong>@part.Letter</strong> · @part.Title</div>
+                <div class="card-body" style="white-space: pre-line">
+                    @(string.IsNullOrWhiteSpace(part.Text) ? "—" : part.Text)
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string? Need { get; set; }
+    [Parameter] public string? Approach { get; set; }
+    [Parameter] public string? Benefit { get; set; }
+    [Parameter] public string? Competition { get; set; }
+
+    // Чотири блоки в порядку N, A, B, C
+    private (string Letter, string Title, string? Text)[] Parts =>
+    [
+        ("N", "Need — потреба", Need),
+        ("A", "Approach — підхід", Approach),
+        ("B", "Benefit — вигоди на витрати", Benefit),
+        ("C", "Competition — конкуренція", Competition)
+    ];
+}
