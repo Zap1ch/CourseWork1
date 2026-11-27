@@ -1,72 +1,86 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { getIdeas } from "../services/ideaService";
+import type { IdeaSummary } from "../types/idea";
 
 function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout, user } = useAuth();
+
+  const [ideas, setIdeas] = useState<IdeaSummary[] | null>(null);
+
+  // Історія оновлюється при кожному переході, тому нова ідея з'являється одразу
+  useEffect(() => {
+    async function loadIdeas() {
+      try {
+        const data = await getIdeas();
+        setIdeas(data);
+      } catch {
+        setIdeas([]);
+      }
+    }
+
+    loadIdeas();
+  }, [location.pathname]);
 
   function handleLogout() {
     logout();
     navigate("/login");
   }
 
+  const email = user?.email || "";
+  const initial = email ? email.charAt(0).toUpperCase() : "?";
+
   return (
     <aside className="sidebar">
-      <div className="logo">
-        <div className="logo-mark">AI</div>
+      <Link className="brand" to="/analyze">
+        <img className="brand-mark" src="/logo.jpg" alt="Startup Validator" />
+        <span className="brand-name">Startup Validator</span>
+      </Link>
 
-        <div>
-          <strong>Startup Validator</strong>
-          <span>AI product assistant</span>
-        </div>
-      </div>
+      <Link className="new-idea" to="/analyze">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+          <path d="M8 3v10M3 8h10" />
+        </svg>
+        Нова ідея
+      </Link>
+      <Link className="new-idea mobile-only" to="/ideas">
+        Історія
+      </Link>
 
-      <nav className="sidebar-nav">
-        <NavLink
-          to="/dashboard"
-          className={({ isActive }) =>
-            isActive ? "nav-item nav-active" : "nav-item"
-          }
-        >
-          <span>▣</span>
-          Dashboard
-        </NavLink>
+      <div className="sidebar-label">Історія</div>
 
-        <NavLink
-          to="/analyze"
-          className={({ isActive }) =>
-            isActive ? "nav-item nav-active" : "nav-item"
-          }
-        >
-          <span>✦</span>
-          Analyze idea
-        </NavLink>
+      <nav className="history">
+        {ideas === null && <div className="history-empty">Завантаження…</div>}
 
-        <NavLink
-          to="/ideas"
-          className={({ isActive }) =>
-            isActive ? "nav-item nav-active" : "nav-item"
-          }
-        >
-          <span>☰</span>
-          Ideas history
-        </NavLink>
+        {ideas !== null && ideas.length === 0 && (
+          <div className="history-empty">Ще немає ідей</div>
+        )}
+
+        {ideas !== null &&
+          ideas.map((idea) => (
+            <NavLink
+              key={idea.id}
+              className="history-item"
+              to={`/ideas/${idea.id}`}
+              title={idea.idea_text}
+            >
+              {idea.idea_text}
+            </NavLink>
+          ))}
       </nav>
 
+      <Link className="history-all" to="/ideas">
+        Усі ідеї
+      </Link>
+
       <div className="sidebar-footer">
-        <div className="user-mini-card">
-          <span className="user-avatar">
-            {user?.email?.charAt(0).toUpperCase() || "U"}
-          </span>
-
-          <div>
-            <strong>{user?.email || "User"}</strong>
-            <small>Logged in</small>
-          </div>
-        </div>
-
-        <button className="logout-button" type="button" onClick={handleLogout}>
-          Logout
+        <span className="avatar">{initial}</span>
+        <span className="user-email">{email}</span>
+        <button className="link-button" type="button" onClick={handleLogout}>
+          Вийти
         </button>
       </div>
     </aside>
