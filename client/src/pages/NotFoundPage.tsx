@@ -2,19 +2,12 @@ import { Link } from "react-router-dom";
 
 function NotFoundPage() {
   return (
-    <main className="not-found-page">
-      <section>
-        <p className="eyebrow">404</p>
-
-        <h1>Page not found</h1>
-
-        <p>The page you are looking for does not exist.</p>
-
-        <Link className="primary-link" to="/dashboard">
-          Back to dashboard
-        </Link>
-      </section>
-    </main>
+    <div className="container">
+      <h1 className="page-title">Сторінку не знайдено</h1>
+      <p className="muted">
+        Такої адреси немає. <Link to="/">Повернутися на головну</Link>
+      </p>
+    </div>
   );
 }
 

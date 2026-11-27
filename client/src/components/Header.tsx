@@ -8,27 +8,20 @@ interface HeaderProps {
   actionTo?: string;
 }
 
-function Header({
-  eyebrow,
-  title,
-  description,
-  actionLabel,
-  actionTo,
-}: HeaderProps) {
+// Заголовок сторінки
+function Header({ title, description, actionLabel, actionTo }: HeaderProps) {
   return (
-    <header className="app-header">
-      <div>
-        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-        <h1>{title}</h1>
-        {description && <p>{description}</p>}
-      </div>
+    <>
+      <h1 className="page-title">{title}</h1>
+
+      {description && <p className="muted">{description}</p>}
 
       {actionLabel && actionTo && (
-        <Link className="primary-link" to={actionTo}>
+        <Link className="button" to={actionTo}>
           {actionLabel}
         </Link>
       )}
-    </header>
+    </>
   );
 }
 

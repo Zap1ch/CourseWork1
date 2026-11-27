@@ -4,16 +4,18 @@ interface AnalysisCardProps {
   index?: string;
 }
 
+// Один розділ NABC: кольорова літера, назва і текст
 function AnalysisCard({ title, text, index }: AnalysisCardProps) {
-  return (
-    <article className="analysis-card">
-      <div className="analysis-card-header">
-        {index && <span>{index}</span>}
-        <h3>{title}</h3>
-      </div>
+  const letterClass = `nabc-letter nabc-${(index || "").toLowerCase()}`;
 
-      <p>{text || "No data yet."}</p>
-    </article>
+  return (
+    <section className="nabc-section">
+      <h3>
+        {index && <span className={letterClass}>{index}</span>}
+        {title}
+      </h3>
+      <p>{text || "—"}</p>
+    </section>
   );
 }
 

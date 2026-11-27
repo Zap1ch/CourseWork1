@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import IdeaCard from "../components/IdeaCard";
-import Sidebar from "../components/Sidebar";
 import { getIdeas } from "../services/ideaService";
 import type { IdeaSummary } from "../types/idea";
 
 function IdeasHistoryPage() {
-  const [ideas, setIdeas] = useState<IdeaSummary[]>([]);
-  const [search, setSearch] = useState("");
-
+  const [ideas, setIdeas] = useState<IdeaSummary[] | null>(null);
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function loadIdeas() {
@@ -18,59 +15,34 @@ function IdeasHistoryPage() {
         const data = await getIdeas();
         setIdeas(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load ideas.");
-      } finally {
-        setIsLoading(false);
+        setError(err instanceof Error ? err.message : "Не вдалося завантажити ідеї.");
       }
     }
 
     loadIdeas();
   }, []);
 
-  const filteredIdeas = ideas.filter((idea) =>
-    idea.idea_text.toLowerCase().includes(search.toLowerCase())
-  );
-
   return (
-    <div className="app-shell">
-      <Sidebar />
+    <div className="container">
+      <Header title="Усі ідеї" />
 
-      <main className="main-content">
-        <Header
-          eyebrow="Saved analyses"
-          title="Ideas history"
-          description="Open your previous startup ideas and review AI-generated NABC reports."
-          actionLabel="Analyze new idea"
-          actionTo="/analyze"
-        />
+      {error && <div className="alert-error">{error}</div>}
 
-        <section className="page-section">
-          <div className="toolbar">
-            <input
-              type="search"
-              placeholder="Search ideas..."
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
-          </div>
+      {!error && ideas === null && <p className="muted">Завантаження…</p>}
 
-          {isLoading && <p className="muted-text">Loading ideas...</p>}
-          {error && <p className="error-message">{error}</p>}
+      {!error && ideas !== null && ideas.length === 0 && (
+        <p className="muted">
+          Ідей ще немає. <Link to="/analyze">Проаналізувати першу</Link>
+        </p>
+      )}
 
-          {!isLoading && !error && filteredIdeas.length === 0 && (
-            <div className="empty-state">
-              <h3>No ideas found</h3>
-              <p>Try another search or create a new analysis.</p>
-            </div>
-          )}
-
-          <div className="idea-grid">
-            {filteredIdeas.map((idea) => (
-              <IdeaCard key={idea.id} idea={idea} />
-            ))}
-          </div>
-        </section>
-      </main>
+      {!error && ideas !== null && ideas.length > 0 && (
+        <div className="idea-list">
+          {ideas.map((idea) => (
+            <IdeaCard key={idea.id} idea={idea} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

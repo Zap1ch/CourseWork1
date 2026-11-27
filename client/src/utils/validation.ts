@@ -18,3 +18,10 @@ export function getConfirmError(password: string, confirmPassword: string) {
   if (password !== confirmPassword) return "Паролі не збігаються";
   return "";
 }
+
+export function getIdeaError(ideaText: string) {
+  const text = ideaText.trim();
+  if (!text) return "Опишіть ідею";
+  if (text.length < 20 || text.length > 2000) return "Опис ідеї має містити від 20 до 2000 символів";
+  return "";
+}
