@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { getEmailError, getPasswordError } from "../utils/validation";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -10,12 +11,14 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      navigate("/analyze");
     }
   }, [isAuthenticated, navigate]);
 
@@ -23,72 +26,74 @@ function LoginPage() {
     event.preventDefault();
     setError("");
 
-    if (!email.trim() || !password.trim()) {
-      setError("Please fill in all fields.");
+    const emailMessage = getEmailError(email);
+    const passwordMessage = getPasswordError(password);
+    setEmailError(emailMessage);
+    setPasswordError(passwordMessage);
+
+    if (emailMessage || passwordMessage) {
       return;
     }
 
     try {
       setIsLoading(true);
-
-      await login({
-        email: email.trim(),
-        password,
-      });
-
-      navigate("/dashboard");
+      await login({ email: email.trim(), password });
+      navigate("/analyze");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed.");
+      setError(err instanceof Error ? err.message : "Не вдалося увійти.");
     } finally {
       setIsLoading(false);
     }
   }
 
   return (
-    <main className="auth-page">
-      <section className="auth-card">
-        <div className="auth-badge">AI Startup Validator</div>
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-brand">
+          <img className="brand-mark" src="/logo.jpg" alt="Startup Validator" />
+          <h1 className="auth-title">З поверненням</h1>
+          <p className="auth-sub">Увійдіть, щоб перевіряти ідеї стартапів</p>
+        </div>
 
-        <h1>Welcome back</h1>
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="field">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              className={emailError ? "input invalid" : "input"}
+              autoComplete="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+            {emailError && <div className="validation-message">{emailError}</div>}
+          </div>
 
-        <p className="auth-subtitle">
-          Sign in to continue validating your startup ideas with AI, RAG and the
-          NABC framework.
-        </p>
+          <div className="field">
+            <label htmlFor="password">Пароль</label>
+            <input
+              id="password"
+              type="password"
+              className={passwordError ? "input invalid" : "input"}
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+            {passwordError && <div className="validation-message">{passwordError}</div>}
+          </div>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            placeholder="Enter your email"
-            autoComplete="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
+          {error && <div className="alert-error">{error}</div>}
 
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            placeholder="Enter your password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-
-          {error && <p className="error-message">{error}</p>}
-
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? "Signing in..." : "Sign In"}
+          <button type="submit" className="button button-primary" disabled={isLoading}>
+            {isLoading ? "Вхід..." : "Увійти"}
           </button>
         </form>
 
         <p className="auth-switch">
-          New to website? <Link to="/register">Create account</Link>
+          Немає акаунта? <Link to="/register">Зареєструватися</Link>
         </p>
-      </section>
-    </main>
+      </div>
+    </div>
   );
 }
 
