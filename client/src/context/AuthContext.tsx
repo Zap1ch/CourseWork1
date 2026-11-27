@@ -1,7 +1,6 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -50,19 +49,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.getItem("token")
   );
 
-  const [user, setUser] = useState<AuthUser | null>(() => {
-    const savedToken = localStorage.getItem("token");
-    return savedToken ? decodeJwtPayload(savedToken) : null;
-  });
-
-  useEffect(() => {
-    if (!token) {
-      setUser(null);
-      return;
-    }
-
-    setUser(decodeJwtPayload(token));
-  }, [token]);
+  // Користувач (id і email) береться прямо з токена
+  const user = useMemo<AuthUser | null>(
+    () => (token ? decodeJwtPayload(token) : null),
+    [token]
+  );
 
   async function login(payload: LoginPayload) {
     const response = await loginUser(payload);
@@ -73,7 +64,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     localStorage.setItem("token", response.token);
     setToken(response.token);
-    setUser(decodeJwtPayload(response.token));
   }
 
   async function register(payload: RegisterPayload) {
@@ -83,7 +73,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   function logout() {
     localStorage.removeItem("token");
     setToken(null);
-    setUser(null);
   }
 
   const value = useMemo<AuthContextValue>(
@@ -101,6 +90,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// Хук лежить у тому ж файлі, що й компонент, тому це правило тут вимкнено
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext);
 
